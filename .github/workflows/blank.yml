@@ -1,0 +1,270 @@
+class Change {
+    private String name;
+    private int coinAmount;
+    private int dollar;
+    private int fiftyCents;
+    private int twentyCents;
+    private int tenCents;
+    private int fiveCents;
+
+    public Change() {
+        this.name = "";
+        this.coinAmount = 0;
+        this.calculateChange();
+    }
+
+    public Change(String name, int coinAmount) {
+        this.name = name;
+        this.coinAmount = coinAmount;
+        this.calculateChange();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCoinAmount() {
+        return coinAmount;
+    }
+
+    public void setCoinAmount(int coinAmount) {
+        this.coinAmount = coinAmount;
+        this.calculateChange();
+    }
+
+    public int getDollar() {
+        return dollar;
+    }
+
+    public int getFiftyCents() {
+        return fiftyCents;
+    }
+
+    public int getTwentyCents() {
+        return twentyCents;
+    }
+
+    public int getTenCents() {
+        return tenCents;
+    }
+
+    public int getFiveCents() {
+        return fiveCents;
+    }
+
+    private void calculateChange() {
+        dollar = coinAmount / 100;
+        coinAmount %= 100;
+        fiftyCents = coinAmount / 50;
+        coinAmount %= 50;
+        twentyCents = coinAmount / 20;
+        coinAmount %= 20;
+        tenCents = coinAmount / 10;
+        coinAmount %= 10;
+        fiveCents = coinAmount / 5;
+    }
+}
+
+public class ChangeUser {
+    public static void main(String[] args) {
+        Change[] changeArray = new Change[100]; // Maximum of 100 records
+
+        int changeCount = 0;
+        int currentIndex = 0;
+        String inputName;
+        int inputAmount;
+        String continueInput = "Y";
+
+        System.out.println("Recommendation: Please enter at least 8 records to test the program.");
+
+        while (continueInput.equalsIgnoreCase("Y")) {
+            System.out.println("Please enter the name of the person:");
+            inputName = System.console().readLine();
+            if (inputName.isEmpty() || inputName.split(" ").length > 1) {
+                System.out.println("Invalid name. Please enter a single-word name.");
+                continue;
+            }
+
+            System.out.println("Please enter the coin value for the person (multiple of 5):");
+            inputAmount = Integer.parseInt(System.console().readLine());
+            if (inputAmount % 5 != 0) {
+                System.out.println("Coin value must be a multiple of 5.");
+                continue;
+            }
+
+            boolean nameExists = false;
+            for (int i = 0; i < changeCount; i++) {
+                if (inputName.equalsIgnoreCase(changeArray[i].getName())) {
+                    changeArray[i].setCoinAmount(changeArray[i].getCoinAmount() + inputAmount);
+                    nameExists = true;
+                    break;
+                }
+            }
+
+            if (!nameExists) {
+                changeArray[currentIndex] = new Change(inputName, inputAmount);
+                currentIndex++;
+                changeCount++;
+            }
+
+            System.out.println("Do you have more person to enter (Y/N): ");
+            continueInput = System.console().readLine();
+        }
+
+        boolean exitFlag = false;
+
+        while (!exitFlag) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Enter a name and display change to be given for each denomination");
+            System.out.println("2. Find the name with the largest amount and display change");
+            System.out.println("3. Find the name with the smallest amount and display change");
+            System.out.println("4. Calculate and display the total number of coins for each denomination");
+            System.out.println("5. Calculate and display the total amount");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice (1-6): ");
+            String menuChoice = System.console().readLine();
+
+            switch (menuChoice) {
+                case "1":
+                    System.out.print("Enter the name: ");
+                    String searchName = System.console().readLine();
+                    boolean found = false;
+                    for (int i = 0; i < changeCount; i++) {
+                        if (searchName.equalsIgnoreCase(changeArray[i].getName())) {
+                            System.out.println("Customer:");
+                            System.out.println(changeArray[i].getName() + " " + changeArray[i].getCoinAmount() + " cents");
+                            System.out.println("Change:");
+                            if (changeArray[i].getDollar() > 0)
+                                System.out.println("$1: " + changeArray[i].getDollar());
+                            if (changeArray[i].getFiftyCents() > 0)
+                                System.out.println("50 cents: " + changeArray[i].getFiftyCents());
+                            if (changeArray[i].getTwentyCents() > 0)
+                                System.out.println("20 cents: " + changeArray[i].getTwentyCents());
+                            if (changeArray[i].getTenCents() > 0)
+                                System.out.println("10 cents: " + changeArray[i].getTenCents());
+                            if (changeArray[i].getFiveCents() > 0)
+                                System.out.println("5 cents: " + changeArray[i].getFiveCents());
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        System.out.println("Name: " + searchName);
+                        System.out.println("Not found");
+                    }
+                    break;
+
+                case "2":
+                    int largestAmount = 0;
+                    int largestIndex = -1;
+                    for (int i = 0; i < changeCount; i++) {
+                        if (changeArray[i].getCoinAmount() > largestAmount) {
+                            largestAmount = changeArray[i].getCoinAmount();
+                            largestIndex = i;
+                        }
+                    }
+                    if (largestIndex != -1) {
+                        System.out.println("Name: " + changeArray[largestIndex].getName());
+                        System.out.println("Change:");
+                        if (changeArray[largestIndex].getDollar() > 0)
+                            System.out.println("$1: " + changeArray[largestIndex].getDollar());
+                        if (changeArray[largestIndex].getFiftyCents() > 0)
+                            System.out.println("50 cents: " + changeArray[largestIndex].getFiftyCents());
+                        if (changeArray[largestIndex].getTwentyCents() > 0)
+                            System.out.println("20 cents: " + changeArray[largestIndex].getTwentyCents());
+                        if (changeArray[largestIndex].getTenCents() > 0)
+                            System.out.println("10 cents: " + changeArray[largestIndex].getTenCents());
+                        if (changeArray[largestIndex].getFiveCents() > 0)
+                            System.out.println("5 cents: " + changeArray[largestIndex].getFiveCents());
+                    }
+                    break;
+
+                case "3":
+                    int smallestAmount = Integer.MAX_VALUE;
+                    int smallestIndex = -1;
+                    for (int i = 0; i < changeCount; i++) {
+                        if (changeArray[i].getCoinAmount() < smallestAmount) {
+                            smallestAmount = changeArray[i].getCoinAmount();
+                            smallestIndex = i;
+                        }
+                    }
+                    if (smallestIndex != -1) {
+                        System.out.println("Name: " + changeArray[smallestIndex].getName());
+                        System.out.println("Change:");
+                        if (changeArray[smallestIndex].getDollar() > 0)
+                            System.out.println("$1: " + changeArray[smallestIndex].getDollar());
+                        if (changeArray[smallestIndex].getFiftyCents() > 0)
+                            System.out.println("50 cents: " + changeArray[smallestIndex].getFiftyCents());
+                        if (changeArray[smallestIndex].getTwentyCents() > 0)
+                            System.out.println("20 cents: " + changeArray[smallestIndex].getTwentyCents());
+                        if (changeArray[smallestIndex].getTenCents() > 0)
+                            System.out.println("10 cents: " + changeArray[smallestIndex].getTenCents());
+                        if (changeArray[smallestIndex].getFiveCents() > 0)
+                            System.out.println("5 cents: " + changeArray[smallestIndex].getFiveCents());
+                    }
+                    break;
+
+                case "4":
+                    int totalDollar = 0;
+                    int totalFiftyCents = 0;
+                    int totalTwentyCents = 0;
+                    int totalTenCents = 0;
+                    int totalFiveCents = 0;
+                    for (int i = 0; i < changeCount; i++) {
+                        totalDollar += changeArray[i].getDollar();
+                        totalFiftyCents += changeArray[i].getFiftyCents();
+                        totalTwentyCents += changeArray[i].getTwentyCents();
+                        totalTenCents += changeArray[i].getTenCents();
+                        totalFiveCents += changeArray[i].getFiveCents();
+                    }
+                    System.out.println("Total number of coins for each denomination:");
+                    if (totalDollar > 0)
+                        System.out.println("$1: " + totalDollar);
+                    if (totalFiftyCents > 0)
+                        System.out.println("50 cents: " + totalFiftyCents);
+                    if (totalTwentyCents > 0)
+                        System.out.println("20 cents: " + totalTwentyCents);
+                    if (totalTenCents > 0)
+                        System.out.println("10 cents: " + totalTenCents);
+                    if (totalFiveCents > 0)
+                        System.out.println("5 cents: " + totalFiveCents);
+                    break;
+
+                case "5":
+                    int totalAmount = 0;
+                    for (int i = 0; i < changeCount; i++) {
+                        totalAmount += changeArray[i].getCoinAmount();
+                    }
+                    System.out.println("Total amount: " + totalAmount + " cents");
+                    break;
+
+                case "6":
+                    exitFlag = true;
+                    System.out.println("Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice. Please select a valid option (1-6).");
+            }
+        }
+    }
+}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
